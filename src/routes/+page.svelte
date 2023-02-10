@@ -9,7 +9,7 @@
 </script>
 
 <div class="hero" data-theme="dark">
-  <Navbar logged = {a}/>
+  <Navbar logged = {a} name = { data.user?.name ?? "" } nik = {data.user?.nik ?? ""}/>
     <header class="container">
       <hgroup>
         <h1>Company</h1>

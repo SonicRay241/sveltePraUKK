@@ -2,7 +2,7 @@
 	import Navbar from "$lib/components/Navbar.svelte";
 
 </script>
-  <Navbar/>
+  <Navbar name = {""}, nik = {""}/>
   <!-- Main -->
   <main class="container">
     <article class="grid">
