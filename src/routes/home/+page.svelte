@@ -117,8 +117,8 @@
 						{modalData.isiLaporan}
 					</p>
 				</div>
-				<div style="padding-left: 30%">
-					<img src={modalData.foto} alt="" style="max-width: 300px;">
+				<div>
+					<img src={modalData.foto} alt="" style="max-width: 300px;float:right;">
 				</div>
 			</div>
 			<footer>
