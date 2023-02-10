@@ -2,10 +2,13 @@ import type { PageServerLoad } from "./$types";
 import { redirect, fail, type Actions } from "@sveltejs/kit";
 
 export const load: PageServerLoad = async ({ locals }) => {
-	const { user, session} = await locals.validateUser()
+	const { user, session } = await locals.validateUser()
 	if (!session) {
 		throw redirect(302, "/")
 	}
+    if (isNaN(Number(user.nik))) {
+        throw redirect(302,"/home/admin")
+    }
     return { 
         user, 
         pengaduan: prisma.pengaduan.findMany({
@@ -29,20 +32,22 @@ export const actions: Actions = {
 
         const tglPengaduan = new Date()
 
-        try {
-            await prisma.pengaduan.create({
-                data: {
-                    titlePengaduan,
-                    tglPengaduan,
-                    isiLaporan,
-                    foto,
-                    nik: user.nik,
-                    user_id: user.userId
-                }
-            })
-        } catch (error) {
-            console.log(error);
-            return fail(500, {message: "There was an error while uploading your data"})
+        if (!(titlePengaduan == "" || isiLaporan == "")) {
+            try {
+                await prisma.pengaduan.create({
+                    data: {
+                        titlePengaduan,
+                        tglPengaduan,
+                        isiLaporan,
+                        foto,
+                        nik: user.nik,
+                        user_id: user.userId
+                    }
+                })
+            } catch (error) {
+                console.log(error);
+                return fail(500, {message: "There was an error while uploading your data"})
+            }
         }
     },
 }

@@ -12,8 +12,13 @@
   <Navbar logged = {a} name = { data.user?.name ?? "" } nik = {data.user?.nik ?? ""}/>
     <header class="container">
       <hgroup>
-        <h1>Company</h1>
-        <h2>A classic company or blog layout with a sidebar</h2>
+        {#if data.user == null}
+        <h1>Hello!</h1>
+        <h2>Proceed to make an account to continue</h2>
+        {:else}
+          <h1>Welcome back, {data.user.name}!</h1>
+          <h2>Happy to meet you again!</h2>
+        {/if}
       </hgroup>
       {#if !data.user}
       <p><a href="/register" role="button">Register</a></p>

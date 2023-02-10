@@ -59,8 +59,8 @@ model Pengaduan {
   id           Int      @id @default(autoincrement())
   titlePengaduan String
   tglPengaduan DateTime
-  isiLaporan   String
-  foto         String
+  isiLaporan   String   @db.LongText
+  foto         String   @db.LongText
   nik          String
   status       Status   @default(NULL)
   user         User     @relation(references: [id], fields: [user_id], onDelete: Cascade)

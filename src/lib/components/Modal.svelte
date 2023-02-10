@@ -1,22 +1,38 @@
 <script>
     let shown = false;
     
-    export const toggle = () => { shown = (shown === true) ? false : true }
+    export const toggle = () => { shown = (shown === false) ? true : false }
 
 </script>
 
 { #if shown }
-    <dialog>
-        <article>
-            <header>
-                <h1>Hello</h1>
-            </header>
-            <p>
-                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Sint pariatur vel cupiditate ad quaerat? Libero officia dolore quidem eligendi. Aperiam, magnam veritatis consectetur accusantium adipisci qui debitis odit quisquam deleniti?
-            </p>
-            <footer>
-                <button on:click={ () => toggle }></button>
-            </footer>
-        </article>
-    </dialog>
+<div class="modal-wrapper">
+    <div class="modal">
+            <article>
+                <span class="close" on:click={ () => toggle() }>&times;</span>
+                <slot/>
+            </article>
+    </div>
+</div>
 { /if }
+
+<style>
+    .modal-wrapper {
+        background-color: black;
+        background-color: rgba(0, 0, 0, 0.6);
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+    }
+    .modal {
+        max-width: 80vw;
+        padding: 1 rem;
+        margin: auto;
+    }
+    .close {
+        float: right;
+        cursor: pointer;
+    }
+</style>

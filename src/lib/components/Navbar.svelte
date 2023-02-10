@@ -14,7 +14,11 @@
             <summary aria-haspopup="listbox" role="link" class="contrast">Profile</summary>
             <ul role="listbox">
               <li><h6>Nama: { name }</h6></li>
+              {#if nik == ""}
+              <li><p>Admin</p></li>
+              {:else}
               <li><p>Nik: { nik }</p></li>
+              {/if}
               <li>
                   <form action="" method="POST">
                       <button formaction="/logout" type="submit" class="outline">Logout</button>

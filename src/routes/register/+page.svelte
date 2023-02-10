@@ -1,5 +1,12 @@
-<script>
+<script lang="ts">
   import Navbar from "$lib/components/Navbar.svelte";
+
+  let name: any;
+  let username: any;
+  let password: any;
+  let phone: any;
+  let nik: any;
+
 </script>
 
   <Navbar name = {""}, nik = {""}/>
@@ -12,18 +19,18 @@
           <h2>Register a new account</h2>
         </hgroup>
         <form method="POST">
-          <input type="text" name="name" placeholder="Nama" aria-label="Nama" autocomplete="nickname" required>
-          <input type="text" name="username" placeholder="Username" aria-label="Username" autocomplete="nickname" required>
-          <input type="password" name="password" placeholder="Password" aria-label="Password" autocomplete="current-password" required>
-          <input type="text" name="telepon" placeholder="Telepon" aria-label="Telepon" autocomplete="phone" required>
-          <input type="text" name="nik" placeholder="NIK" aria-label="NIK" autocomplete="nickname" required>
+          <input type="text" name="name" bind:value={name} placeholder="Nama" aria-label="Nama" autocomplete="nickname" required>
+          <input type="text" name="username" bind:value={username} placeholder="Username" aria-label="Username" autocomplete="nickname" required>
+          <input type="password" name="password" bind:value={password} placeholder="Password" aria-label="Password" autocomplete="current-password" required>
+          <input type="number" name="telepon" bind:value={phone} placeholder="Telepon" aria-label="Telepon" autocomplete="phone" required>
+          <input type="number" name="nik" bind:value={nik} placeholder="NIK" aria-label="NIK" required>
           <fieldset>
-            <!-- <label for="remember">
-              <input type="checkbox" role="switch" id="remember" name="remember">
-              Remember me
-            </label> -->
           </fieldset>
-          <button type="submit" class="contrast">Register</button>
+          {#if name == undefined || name == "" || username == undefined || username == "" || password == undefined || password == "" || phone == undefined || phone == "" || nik == undefined || nik == ""}
+            <button type="submit" class="contrast" disabled>Register</button>
+          {:else}
+            <button type="submit" class="contrast">Register</button>
+          {/if}
           <p>
             Already have an account? <a href="/login">Login</a>
           </p>
