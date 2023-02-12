@@ -22,7 +22,8 @@ declare global {
 			username: string,
 			name: string,
 			telepon: string,
-			nik: string
+			nik: string,
+			level: string
 		}
 	}
 }

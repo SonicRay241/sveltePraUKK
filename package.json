@@ -1,6 +1,7 @@
 {
 	"name": "praukk2",
 	"version": "0.0.1",
+	"description": "My take on a reporting website using sveltekit.",
 	"private": true,
 	"scripts": {
 		"dev": "vite dev",
@@ -29,6 +30,7 @@
 		"@picocss/pico": "^1.5.7",
 		"@prisma/client": "^4.10.0",
 		"lucia-auth": "^0.6.0",
-		"prisma": "^4.10.0"
+		"prisma": "^4.10.0",
+		"svelte-spa-router": "^3.3.0"
 	}
 }

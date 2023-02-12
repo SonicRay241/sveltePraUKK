@@ -2,12 +2,15 @@
 	import Navbar from '$lib/components/Navbar.svelte';
     import type { PageData } from './$types';
 	import Modal from '$lib/components/Modal.svelte';
+	import { fade } from 'svelte/transition';
+	import { quartOut } from 'svelte/easing';
 	
     export let data: PageData
 	export let avatar: any;
 	
 	let modal: any;
 	let modalData  = {
+		id: "",
 		titlePengaduan: "",
 		isiLaporan: "",
 		tglPengaduan: "",
@@ -20,8 +23,11 @@
 
 	let files: any;
 	let imageGenerated: boolean = false
+
+	let filter: any;
 	
-	const doModalThing = (titlePengaduan: any, isiLaporan: any, tglPengaduan: any, foto: any, status: any) => {
+	const doModalThing = (idPengaduan:any, titlePengaduan: any, isiLaporan: any, tglPengaduan: any, foto: any, status: any) => {
+		modalData.id = idPengaduan
 		modalData.titlePengaduan = titlePengaduan
 		modalData.isiLaporan = isiLaporan
 		modalData.tglPengaduan = tglPengaduan
@@ -41,7 +47,10 @@
 		};
 	}
 
+	let searchStr: any = "";
+
 	$: ({ pengaduan } = data)
+	
 </script>
 
 <Navbar logged={true} name = { data.user?.name ?? "" } nik = {data.user?.nik ?? ""}/>
@@ -57,9 +66,9 @@
 				</div>
 				<label for="image">Upload a picture:</label>
 				<input accept="image/png, image/jpeg" bind:files on:change={(e)=>onFileSelected(e)} id="image" name="image" type="file" />
-				<small>Max 900kb*</small>
+				<small>Max 500kb*</small>
 				{#if files}
-				{#if Number(files[0].size)/1024 > 900}
+				{#if Number(files[0].size)/1024 > 500}
 					<p style="color:red">File too big!</p>
 				{/if}
 				{/if}
@@ -68,30 +77,42 @@
 				<!-- Button -->
 				{#if (title == undefined || isi == undefined || title == "" || isi == "" || !files)}
 					<button type="submit" disabled>Submit</button>
-				{:else if Number(files[0].size)/1024 > 900}
+				{:else if Number(files[0].size)/1024 > 500}
 					<button type="submit" disabled>Submit</button>
 				{:else}
 					<button type="submit">Submit</button>
 				{/if}
 			</form>
 		</article>
-		
-		<div class="table-wrapper">
-			<table role="grid">
-				<thead>
-					<tr>
-						<th scope="col">#</th>
-						<th scope="col">Judul</th>
-						<th scope="col">Tanggal</th>
-						<th scope="col">Status</th>
-						<th scope="col"></th>
-					</tr>
-				</thead>
-				<tbody>
+		<div class="wap">
+			<div class="grid">
+				<div>
+          			<input type="search" id="search" name="search" placeholder="Search" bind:value={searchStr}>
+				</div>
+				<div>
+					<select bind:value={filter}>
+						<option value="NULL">BELUM DIPROSES</option>
+						<option value="PROSES">SEDANG DIPROSES</option>
+						<option value="SELESAI">SUDAH DITANGGAPI</option>
+					</select>
+				</div>
+			</div>
+			<div class="table-wrapper">
+				<table role="grid">
+					<thead>
+						<tr>
+							<th scope="col">Judul</th>
+							<th scope="col">Tanggal</th>
+							<th scope="col">Status</th>
+							<th scope="col"></th>
+						</tr>
+					</thead>
+					<tbody>
 					{#if pengaduan != undefined}
-					{#each pengaduan as a, i}
-					<tr>
-						<th scope="row">{i + 1}</th>
+					{#each pengaduan as a}
+					{#if a.status === filter}
+					{#if a.titlePengaduan.includes(searchStr)}
+					<tr transition:fade="{{duration: 300, easing: quartOut}}">
 						<td>{a.titlePengaduan}</td>
 						<td>{a.tglPengaduan}</td>
 						{#if a.status === "NULL"}
@@ -99,8 +120,10 @@
 						{:else}
 						<td>{a.status}</td>
 						{/if}
-						<td><button on:click={() => doModalThing(a.titlePengaduan, a.isiLaporan, a.tglPengaduan, a.foto, a.status)}>Cek</button></td>
+						<td><button on:click={() => doModalThing(a.id, a.titlePengaduan, a.isiLaporan, a.tglPengaduan, a.foto, a.status)}>Cek</button></td>
 					</tr>
+					{/if}
+					{/if}
 					{/each}
 					{/if}
 					
@@ -113,12 +136,15 @@
 			</header>
 			<div class="grid">
 				<div>
-					<p>
-						{modalData.isiLaporan}
-					</p>
+					<h5>Laporan:</h5>
+					<textarea style="resize: none; height: 300px; width: 100%" readonly>{modalData.isiLaporan}</textarea>
+					<small>Id: {modalData.id}</small>
 				</div>
 				<div>
-					<img src={modalData.foto} alt="" style="max-width: 300px;float:right;">
+					<h5>Foto:</h5>
+					<div style="display: flex; justify-content: center;">
+						<img src={modalData.foto} alt="" style="max-width: 300px;max-height:300px;float:right;">
+					</div>
 				</div>
 			</div>
 			<footer>
@@ -129,15 +155,18 @@
 					<div>
 						{#if modalData.status == "NULL"}
 						<p style="float: right">Status: BELUM DIPROSES</p>
+						{:else if modalData.status == "PROSES"}
+						<p style="float: right">Status: SEDANG DIPROSES</p>
 						{:else}
-						<p style="float: right">Status: {modalData.status}</p>
+						<p style="float: right">Status: SUDAH DITANGGAPI</p>
 						{/if}
 					</div>
 				</div>
 			</footer>
-
-	</Modal>
+			
+		</Modal>
 	</div>
+</div>
 </main>
 
 <style>
@@ -147,12 +176,14 @@
 	thead {
 		position: sticky;
 		top: 0px;
-
-		backdrop-filter: blur(5px);
+		background-color: var(--background-color);
 	}
 	.table-wrapper{
-		max-height: 700px;
+		max-height: 650px;
 		overflow-y: scroll;
+		
+	}
+	.wap {
 		margin-top: 40px;
 	}
 </style>

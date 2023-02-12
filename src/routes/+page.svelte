@@ -3,13 +3,17 @@
   import type { PageData } from './$types';
 	export let data: PageData
   let a = false
+  let admin = false
   if (data.user != null) {
     a = true
+  }
+  if (data.user?.level === "ADMIN") {
+    admin = true
   }
 </script>
 
 <div class="hero" data-theme="dark">
-  <Navbar logged = {a} name = { data.user?.name ?? "" } nik = {data.user?.nik ?? ""}/>
+  <Navbar logged = {a} name = { data.user?.name ?? "" } nik = {data.user?.nik ?? ""} role = {data.user?.level ?? ""} admin = {admin}/>
     <header class="container">
       <hgroup>
         {#if data.user == null}
@@ -41,7 +45,7 @@
         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque lobortis est vel velit bibendum ultrices. Sed aliquam tortor vel odio fermentum ullamcorper eu vitae neque. Sed non diam at tellus venenatis viverra. Vestibulum et leo laoreet arcu tempor eleifend venenatis ac leo. Pellentesque euismod justo sed nisl sollicitudin varius. Duis venenatis nisl sit amet ante rutrum posuere. Etiam nec ullamcorper leo, sed placerat mauris.</p>
         <figure>
           <img src="https://raw.githubusercontent.com/picocss/examples/master/company/assets/ashim-d-silva-3Ijt7UkSBYE-unsplash-1500x750.jpg" alt="Architecture">
-          <figcaption>Image from <a href="https://unsplash.com/photos/3Ijt7UkSBYE" target="_blank">unsplash.com</a></figcaption>
+          <figcaption>Image from <a href="https://unsplash.com/photos/3Ijt7UkSBYE">unsplash.com</a></figcaption>
         </figure>
         <h3>Nulla augue metus</h3>
         <p>Pacilisis sed ante ut, posuere volutpat quam. Maecenas maximus blandit mi ac finibus. Proin quis lacinia tellus. Aliquam erat volutpat. Aliquam erat volutpat. Phasellus suscipit nisi augue, id accumsan tortor auctor ut. Duis odio arcu, egestas nec nulla vel, fermentum bibendum ex.</p>
@@ -50,19 +54,19 @@
       </section>
 
       <aside>
-        <a href="" aria-label="Example"><img src="https://raw.githubusercontent.com/picocss/examples/master/company/assets/maarten-deckers-T5nXYXCf50I-unsplash-1500x750.jpg" alt="Architecture"></a>
+        <a href="/" aria-label="Example"><img src="https://raw.githubusercontent.com/picocss/examples/master/company/assets/maarten-deckers-T5nXYXCf50I-unsplash-1500x750.jpg" alt="Architecture"></a>
         <p>
-            <a href="">Donec sit amet</a><br>
+            <a href="/">Donec sit amet</a><br>
             <small>Class aptent taciti sociosqu ad litora torquent per conubia nostra</small>
         </p>
-        <a href="" aria-label="Example"><img src="https://raw.githubusercontent.com/picocss/examples/master/company/assets/daniel-von-appen-tb4heMa-ZRo-unsplash-1500-750.jpg" alt="Architecture"></a>
+        <a href="/" aria-label="Example"><img src="https://raw.githubusercontent.com/picocss/examples/master/company/assets/daniel-von-appen-tb4heMa-ZRo-unsplash-1500-750.jpg" alt="Architecture"></a>
         <p>
-          <a href="" >Suspendisse potenti</a><br>
+          <a href="/" >Suspendisse potenti</a><br>
           <small>Proin non condimentum tortor. Donec in feugiat sapien.</small>
         </p>
-        <a href="" aria-label="Example"><img src="https://raw.githubusercontent.com/picocss/examples/master/company/assets/sascha-eremin-DNQ-M93tHmA-unsplash-3000x1000.jpg" alt="Architecture"></a>
+        <a href="/" aria-label="Example"><img src="https://raw.githubusercontent.com/picocss/examples/master/company/assets/sascha-eremin-DNQ-M93tHmA-unsplash-3000x1000.jpg" alt="Architecture"></a>
         <p>
-          <a href="" >Nullam lobortis placerat aliquam</a><br>
+          <a href="/" >Nullam lobortis placerat aliquam</a><br>
           <small>Maecenas vitae nibh blandit dolor commodo egestas vel eget neque. Praesent semper justo orci, vel imperdiet mi auctor in.</small>
         </p>
       </aside>
@@ -110,10 +114,7 @@
   }
   
   /* Nav */
-  summary[role="link"].contrast:is([aria-current],:hover,:active,:focus) {
-    background-color: transparent;
-    color: var(--contrast-hover);
-  }
+  
   
   /* Main */
   @media (min-width: 992px) {
@@ -123,9 +124,6 @@
     }
   }
   
-  form.grid {
-    grid-row-gap: 0;
-  }
   
   /* Aside nav */
   aside img {

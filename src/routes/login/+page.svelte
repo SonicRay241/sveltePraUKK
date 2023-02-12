@@ -1,6 +1,9 @@
 <script lang="ts">
 	import Navbar from "$lib/components/Navbar.svelte";
 
+  let username: any;
+  let password: any;
+
 </script>
   <Navbar name = {""}, nik = {""}/>
   <!-- Main -->
@@ -12,15 +15,16 @@
           <h2>Login to your account</h2>
         </hgroup>
         <form method="POST">
-          <input type="text" name="username" placeholder="Username" aria-label="Username" autocomplete="nickname" required>
-          <input type="password" name="password" placeholder="Password" aria-label="Password" autocomplete="current-password" required>
+          <input type="text" name="username" bind:value={username} placeholder="Username" aria-label="Username" autocomplete="nickname" required>
+          <input type="password" name="password" bind:value={password} placeholder="Password" aria-label="Password" autocomplete="current-password" required>
           <fieldset>
-            <!-- <label for="remember">
-              <input type="checkbox" role="switch" id="remember" name="remember">
-              Remember me
-            </label> -->
+            <slot/>
           </fieldset>
+          {#if username === undefined || username === "" || password == undefined || password == ""}
+          <button type="submit" class="contrast" disabled>Login</button>
+          {:else}
           <button type="submit" class="contrast">Login</button>
+          {/if}
           <p>
             Dont have an account? <a href="/register">Register</a>
           </p>

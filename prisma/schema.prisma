@@ -56,26 +56,28 @@ model Key {
 }
 
 model Pengaduan {
-  id           Int      @id @default(autoincrement())
+  id             Int        @id @default(autoincrement())
   titlePengaduan String
-  tglPengaduan DateTime
-  isiLaporan   String   @db.LongText
-  foto         String   @db.LongText
-  nik          String
-  status       Status   @default(NULL)
-  user         User     @relation(references: [id], fields: [user_id], onDelete: Cascade)
-  user_id      String
+  tglPengaduan   DateTime
+  isiLaporan     String     @db.LongText
+  foto           String     @db.LongText
+  nik            String
+  status         Status     @default(NULL)
+  user           User       @relation(references: [id], fields: [user_id], onDelete: Cascade)
+  user_id        String
+  Tanggapan      Tanggapan?
 
   @@map("pengaduan")
 }
 
 model Tanggapan {
-  id           Int      @id @unique
+  id           Int       @id @unique
   idPengaduan  Int
   tglTanggapan DateTime
   tanggapan    String
   petugasId    String
-  user         User     @relation(references: [id], fields: [petugasId])
+  user         User      @relation(references: [id], fields: [petugasId])
+  pengaduan    Pengaduan @relation(references: [id], fields: [id])
 
   @@map("tanggapan")
 }

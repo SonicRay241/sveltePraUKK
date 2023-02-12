@@ -12,7 +12,8 @@ export const auth = lucia({
             username: userdata.username,
             name: userdata.name,
             telepon: userdata.telepon,
-            nik: userdata.nik
+            nik: userdata.nik,
+            level: userdata.level
         }
     }
 })

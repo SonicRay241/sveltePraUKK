@@ -7,6 +7,7 @@
   let phone: any;
   let nik: any;
 
+
 </script>
 
   <Navbar name = {""}, nik = {""}/>
@@ -25,6 +26,7 @@
           <input type="number" name="telepon" bind:value={phone} placeholder="Telepon" aria-label="Telepon" autocomplete="phone" required>
           <input type="number" name="nik" bind:value={nik} placeholder="NIK" aria-label="NIK" required>
           <fieldset>
+              <slot/>
           </fieldset>
           {#if name == undefined || name == "" || username == undefined || username == "" || password == undefined || password == "" || phone == undefined || phone == "" || nik == undefined || nik == ""}
             <button type="submit" class="contrast" disabled>Register</button>
