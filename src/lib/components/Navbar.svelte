@@ -2,6 +2,7 @@
     export let logged = false;
     export let name: string;
     export let nik: string;
+    export let telp = "";
     export let admin = false;
     export let role = "";
 </script>
@@ -31,6 +32,7 @@
               {:else}
               <li><p style="float: left;">NIK: { nik }</p></li>
               {/if}
+              <li><p style="float: left;">Telp: { telp }</p></li>
               <li>
                   <form action="" method="POST">
                       <button formaction="/logout" type="submit" class="outline">Logout</button>

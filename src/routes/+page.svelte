@@ -13,7 +13,7 @@
 </script>
 
 <div class="hero" data-theme="dark">
-  <Navbar logged = {a} name = { data.user?.name ?? "" } nik = {data.user?.nik ?? ""} role = {data.user?.level ?? ""} admin = {admin}/>
+  <Navbar logged = {a} name = { data.user?.name ?? "" } nik = {data.user?.nik ?? ""} role = {data.user?.level} admin = {admin}/>
     <header class="container">
       <hgroup>
         {#if data.user == null}

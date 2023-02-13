@@ -12,22 +12,34 @@
 		    isiLaporan: "",
 		    tglPengaduan: "",
 		    foto: "",
-		    status: ""
+		    status: "",
+
+			tanggapan: "",
+			statusTanggapan: ""
 	  }
 
     export let data: PageData
 
     let showSidebar = false
 
+	let tanggapanInp = "";
+	let selected: any;
+
     const toggle = () => { showSidebar = (showSidebar === false) ? true : false }
 
-    const doModalThing = (idPengaduan:any, titlePengaduan: any, isiLaporan: any, tglPengaduan: any, foto: any, status: any) => {
+    const doModalThing = (idPengaduan:any, titlePengaduan: any, isiLaporan: any, tglPengaduan: any, foto: any, status: any, tanggapan: any, statusTanggapan: any) => {
   		modalData.id = idPengaduan
   		modalData.titlePengaduan = titlePengaduan
   		modalData.isiLaporan = isiLaporan
   		modalData.tglPengaduan = tglPengaduan
   		modalData.foto = foto
   		modalData.status = status
+
+		modalData.tanggapan = tanggapan
+		modalData.statusTanggapan = statusTanggapan
+
+		tanggapanInp = "";
+		selected = "NULL"
       
   		modal.toggle()
   	}
@@ -36,11 +48,11 @@
     let searchStr = "";
 
 
-    $: ({ pengaduan, user } = data)
+    $: ({ pengaduan, user, tanggapan } = data)
 
 </script>
 
-<Navbar logged={true} name = { data.user?.name ?? "" } nik = {data.user?.nik ?? ""} admin={true} role={user.level}>
+<Navbar logged={true} name = { user.name ?? "" } nik = {user.nik ?? ""} admin={true} role={user.level} telp = {user.telepon}>
 <span style="margin:10px;cursor:pointer;" on:click={toggle} on:keypress={toggle}>
   <svg aria-hidden="true" focusable="false" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="16px" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <line x1="3" y1="12" x2="21" y2="12"></line>
@@ -91,7 +103,17 @@
 						{:else}
 						<td>{a.status}</td>
 						{/if}
-						<td><button on:click={() => doModalThing(a.id, a.titlePengaduan, a.isiLaporan, a.tglPengaduan, a.foto, a.status)}>Tanggapi</button></td>
+
+						{#if tanggapan != undefined}
+						{#each tanggapan as b}
+						{#if b.idPengaduan === a.id}
+						<td><button on:click={() => doModalThing(a.id, a.titlePengaduan, a.isiLaporan, a.tglPengaduan, a.foto, a.status, b.tanggapan, a.status)}>Tanggapi</button></td>
+						{/if}
+						{:else}
+						<td><button on:click={() => doModalThing(a.id, a.titlePengaduan, a.isiLaporan, a.tglPengaduan, a.foto, a.status, "", "NULL")}>Tanggapi</button></td>
+						{/each}
+						{/if}
+						
 					</tr>
 					{/if}
 					{/if}
@@ -117,6 +139,30 @@
 						<img src={modalData.foto} alt="" style="max-width: 300px;max-height:300px;float:right;">
 					</div>
 				</div>
+			</div>
+			<div>
+				<form method="POST">
+					<h5>Tanggapan:</h5>
+					<textarea name="isiTanggapan" id="isiTanggapan" style="resize: none; height: 300px; width: 100%" bind:value={tanggapan}></textarea>
+					<div class="grid">
+						<div></div>
+						<div>
+							<select name="selectedStatus" id="selectedStatus" bind:value={selected}>
+								<option value="NULL" disabled>BELUM DIPROSES</option>
+								<option value="PROSES">SEDANG DIPROSES</option>
+								<option value="SELESAI">SUDAH DITANGGAPI</option>
+							</select>
+						</div>
+						<div>
+							{#if tanggapan === undefined || tanggapanInp === "" || selected === "NULL"}
+							<button type="submit" disabled>Submit</button>
+							{:else}
+							<button type="submit">Submit</button>
+							{/if}
+						</div>
+					</div>
+					
+				</form>
 			</div>
 			<footer>
 				<div class="grid">

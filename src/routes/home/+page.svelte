@@ -49,11 +49,11 @@
 
 	let searchStr: any = "";
 
-	$: ({ pengaduan } = data)
+	$: ({ user, pengaduan } = data)
 	
 </script>
 
-<Navbar logged={true} name = { data.user?.name ?? "" } nik = {data.user?.nik ?? ""}/>
+<Navbar logged={true} name = { user.name ?? "" } nik = { user.nik ?? "" } telp = {user.telepon}/>
 <main class="container">
 	<div class="grid">
 		<article>
