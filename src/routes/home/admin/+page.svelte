@@ -35,50 +35,79 @@
   		modalData.foto = foto
   		modalData.status = status
 
-		modalData.tanggapan = tanggapan
-		modalData.statusTanggapan = statusTanggapan
-
-		tanggapanInp = "";
-		selected = "NULL"
+		tanggapanInp = tanggapan
+		selected = statusTanggapan
       
   		modal.toggle()
   	}
 
+	let pengaduanPage = true
+
+	const showPengaduan = () => { pengaduanPage = true; toggle() }
+
+	const showPetugas = () => { pengaduanPage = false; toggle() }
+
     let filter: any;
     let searchStr = "";
+
+	let name: any;
+  	let username: any;
+  	let password: any;
+  	let phone: any;
+  	let nik: any;
+
+	let registerRole: any;
 
 
     $: ({ pengaduan, user, tanggapan } = data)
 
 </script>
 
-<Navbar logged={true} name = { user.name ?? "" } nik = {user.nik ?? ""} admin={true} role={user.level} telp = {user.telepon}>
+<Navbar logged={true} name = { user?.name ?? "" } nik = {user?.nik ?? ""} admin={true} role={user?.level} telp = {user?.telepon}>
+{#if user?.level === "ADMIN"}
 <span style="margin:10px;cursor:pointer;" on:click={toggle} on:keypress={toggle}>
   <svg aria-hidden="true" focusable="false" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="16px" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <line x1="3" y1="12" x2="21" y2="12"></line>
     <line x1="3" y1="6" x2="21" y2="6"></line>
     <line x1="3" y1="18" x2="21" y2="18"></line>
   </svg></span>
+{/if}
 </Navbar>
 <main class="container">
 	{#if showSidebar}
 	<div class="sidebar" transition:slide="{{duration: 300, easing: quartOut}}">
-			<span class="close" on:click={ () => toggle() } on:keypress={ () => toggle() } style="float:right;margin:10px;margin-right:20px;cursor:pointer;"><h4>&times;</h4></span>
+		<div style="margin-bottom: 50px">
+			<span class="close" on:click={ () => toggle() } on:keypress={ () => toggle() } style="float:right;margin:10px;margin-right:20px;cursor:pointer;color:white;"><h4>&times;</h4></span>
+		</div>
+		<div>
+			<a href="/home/admin" on:click={showPengaduan} role="button">Pengaduan</a>
+			<a href="/home/admin" on:click={showPetugas} role="button">Registrasi</a>
+		</div>
 	</div>
 	{/if}
-  <div class="grid">
+	{#if pengaduanPage}
+  <div class="grid" transition:slide="{{duration: 300, easing: quartOut}}">
     <div class="wap">
 			<div class="grid">
 				<div>
-          <input type="search" id="search" name="search" placeholder="Search" bind:value={searchStr}>
+          			<input type="search" id="search" name="search" placeholder="Search" bind:value={searchStr}>
 				</div>
-				<div>
+				{#if user?.level === "ADMIN"}
+				<div class="grid">
 					<select bind:value={filter}>
 						<option value="NULL">BELUM DIPROSES</option>
 						<option value="PROSES">SEDANG DIPROSES</option>
 						<option value="SELESAI">SUDAH DITANGGAPI</option>
 					</select>
+					<button>Generate Laporan</button>
 				</div>
+				{:else}
+				<select bind:value={filter}>
+					<option value="NULL">BELUM DIPROSES</option>
+					<option value="PROSES">SEDANG DIPROSES</option>
+					<option value="SELESAI">SUDAH DITANGGAPI</option>
+				</select>
+				{/if}
 			</div>
 			<div class="table-wrapper">
 				<table role="grid">
@@ -100,8 +129,10 @@
 						<td>{a.tglPengaduan}</td>
 						{#if a.status === "NULL"}
 						<td>BELUM DIPROSES</td>
-						{:else}
-						<td>{a.status}</td>
+						{:else if a.status === "PROSES"}
+						<td>SEDANG DIPROSES</td>
+						{:else if a.status === "SELESAI"}
+						<td>SUDAH DITANGGAPI</td>
 						{/if}
 
 						{#if tanggapan != undefined}
@@ -109,9 +140,10 @@
 						{#if b.idPengaduan === a.id}
 						<td><button on:click={() => doModalThing(a.id, a.titlePengaduan, a.isiLaporan, a.tglPengaduan, a.foto, a.status, b.tanggapan, a.status)}>Tanggapi</button></td>
 						{/if}
-						{:else}
-						<td><button on:click={() => doModalThing(a.id, a.titlePengaduan, a.isiLaporan, a.tglPengaduan, a.foto, a.status, "", "NULL")}>Tanggapi</button></td>
 						{/each}
+						{#if a.status === "NULL"}
+							<td><button on:click={() => doModalThing(a.id, a.titlePengaduan, a.isiLaporan, a.tglPengaduan, a.foto, a.status, "", "NULL")}>Tanggapi</button></td>
+						{/if}
 						{/if}
 						
 					</tr>
@@ -143,23 +175,42 @@
 			<div>
 				<form method="POST">
 					<h5>Tanggapan:</h5>
-					<textarea name="isiTanggapan" id="isiTanggapan" style="resize: none; height: 300px; width: 100%" bind:value={tanggapan}></textarea>
+					{#if modalData.status !== "SELESAI"}
+					<textarea name="isiTanggapan" id="isiTanggapan" style="resize: none; height: 300px; width: 100%" bind:value={tanggapanInp}></textarea>
+					{:else}
+					<textarea name="isiTanggapan" id="isiTanggapan" style="resize: none; height: 300px; width: 100%" bind:value={tanggapanInp} readonly></textarea>
+					{/if}
 					<div class="grid">
 						<div></div>
 						<div>
+							<input type="text" name="pengaduanId" id="pengaduanId" style="display:none;" value={modalData.id}>
+						</div>
+						<div>
+							{#if modalData.status !== "SELESAI"}
 							<select name="selectedStatus" id="selectedStatus" bind:value={selected}>
 								<option value="NULL" disabled>BELUM DIPROSES</option>
 								<option value="PROSES">SEDANG DIPROSES</option>
 								<option value="SELESAI">SUDAH DITANGGAPI</option>
 							</select>
+							{:else}
+							<select name="selectedStatus" id="selectedStatus" bind:value={selected} disabled>
+								<option value="NULL" disabled>BELUM DIPROSES</option>
+								<option value="PROSES">SEDANG DIPROSES</option>
+								<option value="SELESAI">SUDAH DITANGGAPI</option>
+							</select>
+							{/if}
 						</div>
+						{#if modalData.status !== "SELESAI"}
 						<div>
 							{#if tanggapan === undefined || tanggapanInp === "" || selected === "NULL"}
 							<button type="submit" disabled>Submit</button>
+							{:else if modalData.status === "PROSES"}
+							<button formaction="?/updateTanggapan" type="submit">Submit</button>
 							{:else}
-							<button type="submit">Submit</button>
+							<button formaction="?/beriTanggapan" type="submit">Submit</button>
 							{/if}
 						</div>
+						{/if}
 					</div>
 					
 				</form>
@@ -184,6 +235,51 @@
 		</Modal>
 	</div>
 </div>
+{:else}
+<!-- ------------------------------------------------------------------------------------------ -->
+<article class="grid" transition:slide="{{duration: 300, easing: quartOut}}">
+	<div>
+	  <hgroup>
+		<h1>Register</h1>
+		<h2>Register a new account</h2>
+	  </hgroup>
+	  <form method="POST">
+		<input type="text" name="name" bind:value={name} placeholder="Nama" aria-label="Nama" autocomplete="nickname" required>
+		<input type="text" name="username" bind:value={username} placeholder="Username" aria-label="Username" autocomplete="nickname" required>
+		<input type="password" name="password" bind:value={password} placeholder="Password" aria-label="Password" autocomplete="current-password" required>
+		<input type="number" name="telepon" bind:value={phone} placeholder="Telepon" aria-label="Telepon" autocomplete="phone" required>
+		{#if registerRole === "MASYARAKAT"}
+		<input type="number" name="nik" bind:value={nik} placeholder="NIK" aria-label="NIK">
+		{:else}
+		<input type="number" name="nik" placeholder="NIK" aria-label="NIK" disabled>
+		{/if}
+		<select bind:value={registerRole}>
+			<option value="MASYARAKAT">MASYARAKAT</option>
+			<option value="PETUGAS">PETUGAS</option>
+			<option value="ADMIN">ADMIN</option>
+		</select>
+		<input type="text" name="role" bind:value={registerRole} style="display: none;">
+		<fieldset>
+			<slot/>
+		</fieldset>
+		{#if registerRole === "MASYARAKAT"}
+				{#if name == undefined || name == "" || username == undefined || username == "" || password == undefined || password == "" || phone == undefined || phone == "" || nik == undefined || nik == ""}
+		  			<button type="submit" class="contrast" disabled>Register</button>
+				{:else}
+		  			<button formaction="?/register" type="submit" class="contrast">Register</button>
+				{/if}
+			{:else}
+				{#if name == undefined || name == "" || username == undefined || username == "" || password == undefined || password == "" || phone == undefined || phone == ""}
+					<button type="submit" class="contrast" disabled>Register</button>
+	  			{:else}
+					<button formaction="?/register" type="submit" class="contrast">Register</button>
+	  			{/if}
+		{/if}
+	  </form>
+	</div>
+  </article>
+
+{/if}
 </main>
 
 <style>

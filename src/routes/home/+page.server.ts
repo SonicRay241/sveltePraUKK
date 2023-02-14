@@ -6,7 +6,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 	if (!session) {
 		throw redirect(302, "/")
 	}
-    if (isNaN(Number(user.nik))) {
+    if (user.level != "MASYARAKAT") {
         throw redirect(302,"/home/admin")
     }
     return { 
@@ -15,7 +15,8 @@ export const load: PageServerLoad = async ({ locals }) => {
             where: {
                 user_id: user.userId
             }
-        })
+        }),
+        tanggapan: prisma.tanggapan.findMany()
     }
 }
 

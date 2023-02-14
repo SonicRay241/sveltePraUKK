@@ -71,13 +71,13 @@ model Pengaduan {
 }
 
 model Tanggapan {
-  id           Int       @id @unique
-  idPengaduan  Int
+  id           Int       @id @default(autoincrement())
+  idPengaduan  Int       @unique
   tglTanggapan DateTime
-  tanggapan    String
+  tanggapan    String    @db.LongText
   petugasId    String
   user         User      @relation(references: [id], fields: [petugasId])
-  pengaduan    Pengaduan @relation(references: [id], fields: [id])
+  pengaduan    Pengaduan @relation(references: [id], fields: [idPengaduan])
 
   @@map("tanggapan")
 }

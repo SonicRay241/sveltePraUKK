@@ -26,7 +26,7 @@
             <summary aria-haspopup="listbox" role="link" class="contrast">Profile</summary>
             <ul role="listbox">
               <li><h5 style="float: left;">Nama: { name } </h5></li>
-              {#if isNaN(Number(nik))}
+              {#if role != "MASYARAKAT"}
               <li><p style="float: left;">Id: { nik }</p></li>
               <li><p style="float: left;">Role: { role }</p></li>
               {:else}

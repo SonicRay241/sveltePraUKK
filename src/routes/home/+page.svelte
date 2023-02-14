@@ -2,7 +2,7 @@
 	import Navbar from '$lib/components/Navbar.svelte';
     import type { PageData } from './$types';
 	import Modal from '$lib/components/Modal.svelte';
-	import { fade } from 'svelte/transition';
+	import { fade, slide } from 'svelte/transition';
 	import { quartOut } from 'svelte/easing';
 	
     export let data: PageData
@@ -18,6 +18,8 @@
 		status: ""
 	}
 
+	let tanggapann = "";
+
 	let title: any;
 	let isi: any;
 
@@ -26,16 +28,18 @@
 
 	let filter: any;
 	
-	const doModalThing = (idPengaduan:any, titlePengaduan: any, isiLaporan: any, tglPengaduan: any, foto: any, status: any) => {
-		modalData.id = idPengaduan
-		modalData.titlePengaduan = titlePengaduan
-		modalData.isiLaporan = isiLaporan
-		modalData.tglPengaduan = tglPengaduan
-		modalData.foto = foto
-		modalData.status = status
+	const doModalThing = (idPengaduan:any, titlePengaduan: any, isiLaporan: any, tglPengaduan: any, foto: any, status: any, tanggapan: any) => {
+  		modalData.id = idPengaduan
+  		modalData.titlePengaduan = titlePengaduan
+  		modalData.isiLaporan = isiLaporan
+  		modalData.tglPengaduan = tglPengaduan
+  		modalData.foto = foto
+  		modalData.status = status
 
-		modal.toggle()
-	}
+		tanggapann = tanggapan
+      
+  		modal.toggle()
+  	}
 
 	const onFileSelected = (e:any) => {
 	let image = e.target.files[0];
@@ -49,13 +53,13 @@
 
 	let searchStr: any = "";
 
-	$: ({ user, pengaduan } = data)
+	$: ({ pengaduan, user, tanggapan } = data)
 	
 </script>
 
-<Navbar logged={true} name = { user.name ?? "" } nik = { user.nik ?? "" } telp = {user.telepon}/>
+<Navbar logged={true} name = { user?.name ?? "" } nik = { user?.nik ?? "" } telp = {user?.telepon}/>
 <main class="container">
-	<div class="grid">
+	<div class="grid" transition:slide>
 		<article>
 			<form method="POST">
 				<!-- Markup example 2: input is after label -->
@@ -117,10 +121,22 @@
 						<td>{a.tglPengaduan}</td>
 						{#if a.status === "NULL"}
 						<td>BELUM DIPROSES</td>
-						{:else}
-						<td>{a.status}</td>
+						{:else if a.status === "PROSES"}
+						<td>SEDANG DIPROSES</td>
+						{:else if a.status === "SELESAI"}
+						<td>SUDAH DITANGGAPI</td>
 						{/if}
-						<td><button on:click={() => doModalThing(a.id, a.titlePengaduan, a.isiLaporan, a.tglPengaduan, a.foto, a.status)}>Cek</button></td>
+
+						{#if tanggapan != undefined}
+						{#each tanggapan as b}
+						{#if b.idPengaduan === a.id}
+						<td><button on:click={() => doModalThing(a.id, a.titlePengaduan, a.isiLaporan, a.tglPengaduan, a.foto, a.status, b.tanggapan)}>Cek</button></td>
+						{/if}
+						{/each}
+						{#if a.status === "NULL"}
+							<td><button on:click={() => doModalThing(a.id, a.titlePengaduan, a.isiLaporan, a.tglPengaduan, a.foto, a.status, "")}>Cek</button></td>
+						{/if}
+						{/if}
 					</tr>
 					{/if}
 					{/if}
@@ -147,6 +163,12 @@
 					</div>
 				</div>
 			</div>
+			{#if !(!tanggapann)}
+			<div>
+				<h5>Tanggapan:</h5>
+				<textarea style="resize: none; height: 300px; width: 100%" bind:value={tanggapann} readonly></textarea>
+			</div>
+			{/if}
 			<footer>
 				<div class="grid">
 					<div>

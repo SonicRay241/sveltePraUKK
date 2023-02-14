@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Navbar from "$lib/components/Navbar.svelte";
   import type { PageData } from './$types';
+
 	export let data: PageData
   let a = false
   let admin = false
@@ -13,7 +14,7 @@
 </script>
 
 <div class="hero" data-theme="dark">
-  <Navbar logged = {a} name = { data.user?.name ?? "" } nik = {data.user?.nik ?? ""} role = {data.user?.level} admin = {admin}/>
+  <Navbar logged = {a} name = { data.user?.name ?? "" } nik = {data.user?.nik ?? ""} role = {data.user?.level} admin = {admin} telp = {data.user?.telepon}/>
     <header class="container">
       <hgroup>
         {#if data.user == null}
@@ -73,6 +74,7 @@
 
     </div>
   </main><!-- ./ Main -->
+  
 
   <style>
     /* Global CSS variables */
