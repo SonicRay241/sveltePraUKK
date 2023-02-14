@@ -1,5 +1,6 @@
 <script lang="ts">
   import Navbar from "$lib/components/Navbar.svelte";
+  import { slide } from "svelte/transition"
 
   let name: any;
   let username: any;
@@ -12,7 +13,7 @@
 
   <Navbar name = {""}, nik = {""}/>
   <!-- Main -->
-  <main class="container">
+  <main class="container" transition:slide>
     <article class="grid">
       <div>
         <hgroup>

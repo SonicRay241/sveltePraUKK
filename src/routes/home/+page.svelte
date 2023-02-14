@@ -57,7 +57,7 @@
 	
 </script>
 
-<Navbar logged={true} name = { user?.name ?? "" } nik = { user?.nik ?? "" } telp = {user?.telepon}/>
+<Navbar logged={true} name = { user?.name ?? "" } nik = { user?.nik ?? "" } telp = {user?.telepon} role={user?.level}/>
 <main class="container">
 	<div class="grid" transition:slide>
 		<article>
@@ -187,6 +187,9 @@
 			</footer>
 			
 		</Modal>
+		<div class="emptyspace">
+
+		</div>
 	</div>
 </div>
 </main>
@@ -203,9 +206,13 @@
 	.table-wrapper{
 		max-height: 650px;
 		overflow-y: scroll;
-		
 	}
 	.wap {
 		margin-top: 40px;
+	}
+	@media (max-width: 992px){
+		.emptyspace {
+			height: 50vh;
+		}
 	}
 </style>

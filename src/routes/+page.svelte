@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Navbar from "$lib/components/Navbar.svelte";
   import type { PageData } from './$types';
+  import { slide } from "svelte/transition"
 
 	export let data: PageData
   let a = false
@@ -15,27 +16,29 @@
 
 <div class="hero" data-theme="dark">
   <Navbar logged = {a} name = { data.user?.name ?? "" } nik = {data.user?.nik ?? ""} role = {data.user?.level} admin = {admin} telp = {data.user?.telepon}/>
-    <header class="container">
-      <hgroup>
-        {#if data.user == null}
-        <h1>Hello!</h1>
-        <h2>Proceed to make an account to continue</h2>
-        {:else}
+    <div class="container" transition:slide>
+      <header class="container">
+        <hgroup>
+          {#if data.user == null}
+          <h1>Hello!</h1>
+          <h2>Proceed to make an account to continue</h2>
+          {:else}
           <h1>Welcome back, {data.user.name}!</h1>
           <h2>Happy to meet you again!</h2>
+          {/if}
+        </hgroup>
+        {#if !data.user}
+        <p><a href="/register" role="button">Register</a></p>
+        <p>Already have an account? <a href="/login" class="primary">Login</a></p>
+        {:else}
+        <a href="/home" role="button">Continue</a>
         {/if}
-      </hgroup>
-      {#if !data.user}
-      <p><a href="/register" role="button">Register</a></p>
-      <p>Already have an account? <a href="/login" class="primary">Login</a></p>
-      {:else}
-      <a href="/home" role="button">Continue</a>
-      {/if}
-    </header>
+      </header>
+    </div>
   </div><!-- ./ Hero -->
 
   <!-- Main -->
-  <main class="container">
+  <main class="container" transition:slide>
     <div class="grid">
 
       <section>

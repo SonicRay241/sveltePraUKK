@@ -80,8 +80,8 @@
 			<span class="close" on:click={ () => toggle() } on:keypress={ () => toggle() } style="float:right;margin:10px;margin-right:20px;cursor:pointer;color:white;"><h4>&times;</h4></span>
 		</div>
 		<div>
-			<a href="/home/admin" on:click={showPengaduan} role="button">Pengaduan</a>
-			<a href="/home/admin" on:click={showPetugas} role="button">Registrasi</a>
+			<a href="/home/admin" on:click={showPengaduan} role="button"><h5>Pengaduan</h5></a><br>
+			<a href="/home/admin" on:click={showPetugas} role="button"><h5>Registrasi</h5></a>
 		</div>
 	</div>
 	{/if}
@@ -138,11 +138,11 @@
 						{#if tanggapan != undefined}
 						{#each tanggapan as b}
 						{#if b.idPengaduan === a.id}
-						<td><button on:click={() => doModalThing(a.id, a.titlePengaduan, a.isiLaporan, a.tglPengaduan, a.foto, a.status, b.tanggapan, a.status)}>Tanggapi</button></td>
+						<td><button on:click={() => doModalThing(a.id, a.titlePengaduan, a.isiLaporan, a.tglPengaduan, a.foto, a.status, b.tanggapan, a.status)}><small>Tanggapi</small></button></td>
 						{/if}
 						{/each}
 						{#if a.status === "NULL"}
-							<td><button on:click={() => doModalThing(a.id, a.titlePengaduan, a.isiLaporan, a.tglPengaduan, a.foto, a.status, "", "NULL")}>Tanggapi</button></td>
+							<td><button on:click={() => doModalThing(a.id, a.titlePengaduan, a.isiLaporan, a.tglPengaduan, a.foto, a.status, "", "NULL")}><small>Tanggapi</small></button></td>
 						{/if}
 						{/if}
 						
@@ -161,15 +161,16 @@
 			</header>
 			<div class="grid">
 				<div>
-					<h5>Laporan:</h5>
-					<textarea style="resize: none; height: 300px; width: 100%" readonly>{modalData.isiLaporan}</textarea>
-					<small>Id: {modalData.id}</small>
-				</div>
-				<div>
 					<h5>Foto:</h5>
 					<div style="display: flex; justify-content: center;">
 						<img src={modalData.foto} alt="" style="max-width: 300px;max-height:300px;float:right;">
 					</div>
+					<br>
+				</div>
+				<div>
+					<h5>Laporan:</h5>
+					<textarea style="resize: none; height: 300px; width: 100%" readonly>{modalData.isiLaporan}</textarea>
+					<small>Id: {modalData.id}</small>
 				</div>
 			</div>
 			<div>
@@ -289,9 +290,20 @@
 		left:0;
 		background-color: var(--primary);
 		height: 100%;
-		width: 20%;
+		width: 100%;
 		z-index: 1;
 	}
+	.sidebar a {
+		width: 100%;
+	}
+
+	@media (min-width: 576px) {
+		.sidebar {
+			width: 25%;
+			max-width: 300px;
+		}
+	}
+
 	textarea {
 		height: 200px;
 	}

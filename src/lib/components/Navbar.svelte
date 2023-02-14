@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { slide } from "svelte/transition"
     export let logged = false;
     export let name: string;
     export let nik: string;
@@ -7,7 +8,7 @@
     export let role = "";
 </script>
 
-<nav class="container-fluid">
+<nav class="container-fluid" transition:slide>
   {#if admin === true}
     <slot/>
   {/if}
