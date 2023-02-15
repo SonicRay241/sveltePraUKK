@@ -86,10 +86,14 @@
 		wb.Sheets["Laporan Tanggapan"] = ws2
 
 		const wbout = write(wb, {bookType: 'xlsx', type: 'binary'})
+
+		//magic codes
 		let buf = new ArrayBuffer(wbout.length)
 		const view = new Uint8Array(buf)
 		for (var i=0; i<wbout.length; i++) view[i] = wbout.charCodeAt(i) & 0xFF
 		const blob = new Blob([buf as BlobPart], {type:"application/octet-stream"})
+
+
 		return blob
 	}
 
