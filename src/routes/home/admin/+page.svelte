@@ -4,6 +4,8 @@
     import Modal from "$lib/components/Modal.svelte";
 	import { fade, slide } from 'svelte/transition';
 	import { quartOut } from 'svelte/easing';
+	import { utils, write } from "xlsx";
+	import saveAs from "file-saver";
 
     let modal: any;
 	  let modalData  = {
@@ -61,6 +63,36 @@
 
     $: ({ pengaduan, user, tanggapan } = data)
 
+	const generateLaporan = () => {	
+		const laporanInput = pengaduan
+		if (laporanInput)
+		for ( var i = 0; i<laporanInput.length; i++) {
+			delete laporanInput[i]["foto"]
+		}
+
+		const date = new Date()
+		const ws = utils.json_to_sheet(laporanInput as any)
+		const ws2 = utils.json_to_sheet(tanggapan as any)
+		const wb = utils.book_new()
+		wb.Props = {
+			Title: "Laporan " + date.toDateString,
+			Subject: "Laporan Pengaduan",
+			Author: user?.name,
+			CreatedDate: date
+		}
+		wb.SheetNames.push("Laporan Pengaduan")
+		wb.SheetNames.push("Laporan Tanggapan")
+		wb.Sheets["Laporan Pengaduan"] = ws
+		wb.Sheets["Laporan Tanggapan"] = ws2
+
+		const wbout = write(wb, {bookType: 'xlsx', type: 'binary'})
+		let buf = new ArrayBuffer(wbout.length)
+		const view = new Uint8Array(buf)
+		for (var i=0; i<wbout.length; i++) view[i] = wbout.charCodeAt(i) & 0xFF
+		const blob = new Blob([buf as BlobPart], {type:"application/octet-stream"})
+		return blob
+	}
+
 </script>
 
 <Navbar logged={true} name = { user?.name ?? "" } nik = {user?.nik ?? ""} admin={true} role={user?.level} telp = {user?.telepon}>
@@ -99,7 +131,7 @@
 						<option value="PROSES">SEDANG DIPROSES</option>
 						<option value="SELESAI">SUDAH DITANGGAPI</option>
 					</select>
-					<button>Generate Laporan</button>
+					<button on:click={() => {saveAs(generateLaporan(), 'Laporan.xlsx')}}>Generate Laporan</button>
 				</div>
 				{:else}
 				<select bind:value={filter}>
