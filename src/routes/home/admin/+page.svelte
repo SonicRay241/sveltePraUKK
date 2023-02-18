@@ -52,6 +52,9 @@
     let filter: any;
     let searchStr = "";
 
+	let filterUser: any;
+    let userSearchStr = "";
+
 	let name: any;
   	let username: any;
   	let password: any;
@@ -61,7 +64,7 @@
 	let registerRole: any;
 
 
-    $: ({ pengaduan, user, tanggapan } = data)
+    $: ({ pengaduan, user, tanggapan, userData } = data)
 
 	const generateLaporan = () => {	
 		const laporanInput = pengaduan
@@ -199,7 +202,7 @@
 				<div>
 					<h5>Foto:</h5>
 					<div style="display: flex; justify-content: center;">
-						<img src={modalData.foto} alt="" style="max-width: 300px;max-height:300px;float:right;">
+						<img src={modalData.foto} alt="" style="max-width: 500px;max-height:300px;float:right;">
 					</div>
 					<br>
 				</div>
@@ -274,47 +277,95 @@
 </div>
 {:else}
 <!-- ------------------------------------------------------------------------------------------ -->
-<article class="grid" transition:slide="{{duration: 300, easing: quartOut}}">
-	<div>
-	  <hgroup>
-		<h1>Register</h1>
-		<h2>Register a new account</h2>
-	  </hgroup>
-	  <form method="POST">
-		<input type="text" name="name" bind:value={name} placeholder="Nama" aria-label="Nama" autocomplete="nickname" required>
-		<input type="text" name="username" bind:value={username} placeholder="Username" aria-label="Username" autocomplete="nickname" required>
-		<input type="password" name="password" bind:value={password} placeholder="Password" aria-label="Password" autocomplete="current-password" required>
-		<input type="number" name="telepon" bind:value={phone} placeholder="Telepon" aria-label="Telepon" autocomplete="phone" required>
-		{#if registerRole === "MASYARAKAT"}
-		<input type="number" name="nik" bind:value={nik} placeholder="NIK" aria-label="NIK">
-		{:else}
-		<input type="number" name="nik" placeholder="NIK" aria-label="NIK" disabled>
-		{/if}
-		<select bind:value={registerRole}>
-			<option value="MASYARAKAT">MASYARAKAT</option>
-			<option value="PETUGAS">PETUGAS</option>
-			<option value="ADMIN">ADMIN</option>
-		</select>
+<div class="grid">
+	<article class="grid" transition:slide="{{duration: 300, easing: quartOut}}">
+		<div>
+			<hgroup>
+				<h1>Register</h1>
+				<h2>Register a new account</h2>
+			</hgroup>
+			<form method="POST">
+				<input type="text" name="name" bind:value={name} placeholder="Nama" aria-label="Nama" autocomplete="nickname" required>
+				<input type="text" name="username" bind:value={username} placeholder="Username" aria-label="Username" autocomplete="nickname" required>
+				<input type="password" name="password" bind:value={password} placeholder="Password" aria-label="Password" autocomplete="current-password" required>
+				<input type="number" name="telepon" bind:value={phone} placeholder="Telepon" aria-label="Telepon" autocomplete="phone" required>
+				{#if registerRole === "MASYARAKAT"}
+				<input type="number" name="nik" bind:value={nik} placeholder="NIK" aria-label="NIK">
+				{:else}
+				<input type="number" name="nik" placeholder="NIK" aria-label="NIK" disabled>
+				{/if}
+				<select bind:value={registerRole}>
+					<option value="MASYARAKAT">MASYARAKAT</option>
+					<option value="PETUGAS">PETUGAS</option>
+					<option value="ADMIN">ADMIN</option>
+				</select>
 		<input type="text" name="role" bind:value={registerRole} style="display: none;">
 		<fieldset>
 			<slot/>
 		</fieldset>
 		{#if registerRole === "MASYARAKAT"}
-				{#if name == undefined || name == "" || username == undefined || username == "" || password == undefined || password == "" || phone == undefined || phone == "" || nik == undefined || nik == ""}
-		  			<button type="submit" class="contrast" disabled>Register</button>
-				{:else}
-		  			<button formaction="?/register" type="submit" class="contrast">Register</button>
-				{/if}
-			{:else}
-				{#if name == undefined || name == "" || username == undefined || username == "" || password == undefined || password == "" || phone == undefined || phone == ""}
-					<button type="submit" class="contrast" disabled>Register</button>
-	  			{:else}
-					<button formaction="?/register" type="submit" class="contrast">Register</button>
-	  			{/if}
+		{#if name == undefined || name == "" || username == undefined || username == "" || password == undefined || password == "" || phone == undefined || phone == "" || nik == undefined || nik == ""}
+		<button type="submit" class="contrast" disabled>Register</button>
+		{:else}
+		<button formaction="?/register" type="submit" class="contrast">Register</button>
 		{/if}
-	  </form>
+		{:else}
+		{#if name == undefined || name == "" || username == undefined || username == "" || password == undefined || password == "" || phone == undefined || phone == ""}
+		<button type="submit" class="contrast" disabled>Register</button>
+		{:else}
+		<button formaction="?/register" type="submit" class="contrast">Register</button>
+		{/if}
+		{/if}
+	</form>
+</div>
+</article>
+<div>
+	<br>
+	<div class="grid">
+		<div>
+			  <input type="search" id="search" name="search" placeholder="Search" bind:value={userSearchStr}>
+		</div>
+		<select bind:value={filterUser}>
+			<option value="MASYARAKAT">MASYARAKAT</option>
+			<option value="PETUGAS">PETUGAS</option>
+			<option value="ADMIN">ADMIN</option>
+		</select>
 	</div>
-  </article>
+	<div class="table-wrapper">
+		<table role="grid">
+			<thead>
+			<tr>
+				{#if filterUser === "MASYARAKAT"}
+				<th scope="col">NIK</th>
+				{:else}
+				<th scope="col">ID</th>
+				{/if}
+				<th scope="col">Nama</th>
+				<th scope="col">Level</th>
+			</tr>
+		</thead>
+		<tbody>
+		{#if userData != undefined}
+		{#each userData as a}
+		{#if a.level === filterUser}
+		{#if a.name.includes(userSearchStr) || a.nik.includes(userSearchStr)}
+		<tr transition:fade="{{duration: 300, easing: quartOut}}">
+			<td>{a.nik}</td>
+			<td>{a.name}</td>
+			<td>{a.level}</td>
+			
+		</tr>
+		{/if}
+		{/if}
+		{/each}
+		{/if}
+		
+	</tbody>
+</table>
+</div>
+</div>
+
+</div>
 
 {/if}
 </main>

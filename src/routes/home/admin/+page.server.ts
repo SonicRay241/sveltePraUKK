@@ -28,6 +28,7 @@ export const load: PageServerLoad = async ({ locals }) => {
     }
     return { 
         user, 
+        userData: prisma.user.findMany(),
         pengaduan: prisma.pengaduan.findMany(),
         tanggapan: prisma.tanggapan.findMany()
     }

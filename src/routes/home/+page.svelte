@@ -159,7 +159,7 @@
 				<div>
 					<h5>Foto:</h5>
 					<div style="display: flex; justify-content: center;">
-						<img src={modalData.foto} alt="" style="max-width: 300px;max-height:300px;float:right;">
+						<img src={modalData.foto} alt="" style="max-width: 500px;max-height:300px;float:right;">
 					</div>
 				</div>
 			</div>
