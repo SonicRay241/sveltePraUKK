@@ -3,15 +3,16 @@
     
     export const toggle = () => { shown = (shown === false) ? true : false }
 
-    import { fade } from 'svelte/transition';
+    import { fade, scale } from 'svelte/transition';
+    import { expoOut } from 'svelte/easing';
 
 </script>
 
 { #if shown }
-<div class="back"transition:fade="{{duration: 100}}"></div>
-<div class="modal-wrapper" transition:fade="{{duration: 200}}">
+<div class="back" transition:fade="{{duration: 300}}"></div>
+<div class="modal-wrapper" transition:scale="{{duration: 500, easing: expoOut}}">
     <div class="modal">
-            <article>
+            <article style="max-height:90vh;overflow-y:scroll;">
                 <span class="close" on:click={ () => toggle() } on:keypress={ () => toggle() }><h3>&times;</h3></span>
                 <slot/>
             </article>

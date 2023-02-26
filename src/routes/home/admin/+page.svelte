@@ -29,7 +29,16 @@
 
     const toggle = () => { showSidebar = (showSidebar === false) ? true : false }
 
-    const doModalThing = (idPengaduan:any, titlePengaduan: any, isiLaporan: any, tglPengaduan: any, foto: any, status: any, tanggapan: any, statusTanggapan: any) => {
+    const doModalThing = (
+		idPengaduan:any, 
+		titlePengaduan: any, 
+		isiLaporan: any, 
+		tglPengaduan: any, 
+		foto: any, 
+		status: any, 
+		tanggapan: any, 
+		statusTanggapan: any
+		) => {
   		modalData.id = idPengaduan
   		modalData.titlePengaduan = titlePengaduan
   		modalData.isiLaporan = isiLaporan
@@ -69,7 +78,7 @@
 	const generateLaporan = () => {	
 		const laporanInput = pengaduan
 		if (laporanInput)
-		for ( var i = 0; i<laporanInput.length; i++) {
+		for ( var i = 0; i<laporanInput.length; i++ ) {
 			delete laporanInput[i]["foto"]
 		}
 
@@ -90,12 +99,11 @@
 
 		const wbout = write(wb, {bookType: 'xlsx', type: 'binary'})
 
-		//magic codes
+		//magic codes, if it works, it works
 		let buf = new ArrayBuffer(wbout.length)
 		const view = new Uint8Array(buf)
-		for (var i=0; i<wbout.length; i++) view[i] = wbout.charCodeAt(i) & 0xFF
+		for (let i=0; i<wbout.length; i++) view[i] = wbout.charCodeAt(i) & 0xFF
 		const blob = new Blob([buf as BlobPart], {type:"application/octet-stream"})
-
 
 		return blob
 	}
@@ -105,22 +113,22 @@
 <Navbar logged={true} name = { user?.name ?? "" } nik = {user?.nik ?? ""} admin={true} role={user?.level} telp = {user?.telepon}>
 {#if user?.level === "ADMIN"}
 <span style="margin:10px;cursor:pointer;" on:click={toggle} on:keypress={toggle}>
-  <svg aria-hidden="true" focusable="false" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="16px" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <svg style="color:white" aria-hidden="true" focusable="false" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="16px" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <line x1="3" y1="12" x2="21" y2="12"></line>
     <line x1="3" y1="6" x2="21" y2="6"></line>
     <line x1="3" y1="18" x2="21" y2="18"></line>
   </svg></span>
 {/if}
 </Navbar>
-<main class="container">
+<main class="container" transition:slide="{{duration: 300, easing: quartOut}}">
 	{#if showSidebar}
 	<div class="sidebar" transition:slide="{{duration: 300, easing: quartOut}}">
 		<div style="margin-bottom: 50px">
 			<span class="close" on:click={ () => toggle() } on:keypress={ () => toggle() } style="float:right;margin:10px;margin-right:20px;cursor:pointer;color:white;"><h4>&times;</h4></span>
 		</div>
 		<div>
-			<a href="/home/admin" on:click={showPengaduan} role="button"><h5>Pengaduan</h5></a><br>
-			<a href="/home/admin" on:click={showPetugas} role="button"><h5>Registrasi</h5></a>
+			<a href="/home/admin" on:click={showPengaduan} role="button"><h5 style="color:white">Pengaduan</h5></a><br>
+			<a href="/home/admin" on:click={showPetugas} role="button"><h5 style="color:white">Registrasi</h5></a>
 		</div>
 	</div>
 	{/if}
@@ -155,14 +163,19 @@
 							<th scope="col">Judul</th>
 							<th scope="col">Tanggal</th>
 							<th scope="col">Status</th>
-							<th scope="col"></th>
+							<th scope="col" on:click={() => location.reload()} style="cursor:pointer">
+								<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16" style="color: #f4511e; float:right;">
+									<path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
+									<path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+								  </svg>
+							</th>
 						</tr>
 					</thead>
 					<tbody>
 					{#if pengaduan != undefined}
 					{#each pengaduan as a}
 					{#if a.status === filter}
-					{#if a.titlePengaduan.includes(searchStr)}
+					{#if a.titlePengaduan.toLowerCase().includes(searchStr.toLowerCase())}
 					<tr transition:fade="{{duration: 300, easing: quartOut}}">
 						<td>{a.titlePengaduan}</td>
 						<td>{a.tglPengaduan}</td>
@@ -198,65 +211,67 @@
 			<header>
 				<h2>{modalData.titlePengaduan}</h2>
 			</header>
-			<div class="grid">
-				<div>
-					<h5>Foto:</h5>
-					<div style="display: flex; justify-content: center;">
-						<img src={modalData.foto} alt="" style="max-width: 500px;max-height:300px;float:right;">
-					</div>
-					<br>
-				</div>
-				<div>
-					<h5>Laporan:</h5>
-					<textarea style="resize: none; height: 300px; width: 100%" readonly>{modalData.isiLaporan}</textarea>
-					<small>Id: {modalData.id}</small>
-				</div>
-			</div>
 			<div>
-				<form method="POST">
-					<h5>Tanggapan:</h5>
-					{#if modalData.status !== "SELESAI"}
-					<textarea name="isiTanggapan" id="isiTanggapan" style="resize: none; height: 300px; width: 100%" bind:value={tanggapanInp}></textarea>
-					{:else}
-					<textarea name="isiTanggapan" id="isiTanggapan" style="resize: none; height: 300px; width: 100%" bind:value={tanggapanInp} readonly></textarea>
-					{/if}
-					<div class="grid">
-						<div></div>
-						<div>
-							<input type="text" name="pengaduanId" id="pengaduanId" style="display:none;" value={modalData.id}>
-						</div>
-						<div>
-							{#if modalData.status !== "SELESAI"}
-							<select name="selectedStatus" id="selectedStatus" bind:value={selected}>
-								<option value="NULL" disabled>BELUM DIPROSES</option>
-								<option value="PROSES">SEDANG DIPROSES</option>
-								<option value="SELESAI">SUDAH DITANGGAPI</option>
-							</select>
-							{:else}
-							<select name="selectedStatus" id="selectedStatus" bind:value={selected} disabled>
-								<option value="NULL" disabled>BELUM DIPROSES</option>
-								<option value="PROSES">SEDANG DIPROSES</option>
-								<option value="SELESAI">SUDAH DITANGGAPI</option>
-							</select>
-							{/if}
-						</div>
-						{#if modalData.status !== "SELESAI"}
-						<div>
-							{#if tanggapan === undefined || tanggapanInp === "" || selected === "NULL"}
-							<button type="submit" disabled>Submit</button>
-							{:else if modalData.status === "PROSES"}
-							<button formaction="?/updateTanggapan" type="submit">Submit</button>
-							{:else}
-							<button formaction="?/beriTanggapan" type="submit">Submit</button>
-							{/if}
-						</div>
-						{/if}
-					</div>
-					
-				</form>
-			</div>
-			<footer>
 				<div class="grid">
+					<div>
+						<h5>Foto:</h5>
+						<div style="display: flex; justify-content: center;">
+							<img src={modalData.foto} alt="" style="max-width: 100%;max-height:300px;float:right;">
+						</div>
+						<br>
+					</div>
+					<div>
+						<h5>Laporan:</h5>
+						<textarea style="resize: none; height: 300px; width: 100%" readonly>{modalData.isiLaporan}</textarea>
+						<small>Id: {modalData.id}</small>
+					</div>
+				</div>
+				<div>
+					<form method="POST">
+						<h5>Tanggapan:</h5>
+						{#if modalData.status !== "SELESAI"}
+						<textarea name="isiTanggapan" id="isiTanggapan" style="resize: none; height: 300px; width: 100%" bind:value={tanggapanInp}></textarea>
+						{:else}
+						<textarea name="isiTanggapan" id="isiTanggapan" style="resize: none; height: 300px; width: 100%" bind:value={tanggapanInp} readonly></textarea>
+						{/if}
+						<div class="grid">
+							<div></div>
+							<div>
+								<input type="text" name="pengaduanId" id="pengaduanId" style="display:none;" value={modalData.id}>
+							</div>
+							<div>
+								{#if modalData.status !== "SELESAI"}
+								<select name="selectedStatus" id="selectedStatus" bind:value={selected}>
+									<option value="NULL" disabled>BELUM DIPROSES</option>
+									<option value="PROSES">SEDANG DIPROSES</option>
+									<option value="SELESAI">SUDAH DITANGGAPI</option>
+								</select>
+								{:else}
+								<select name="selectedStatus" id="selectedStatus" bind:value={selected} disabled>
+									<option value="NULL" disabled>BELUM DIPROSES</option>
+									<option value="PROSES">SEDANG DIPROSES</option>
+									<option value="SELESAI">SUDAH DITANGGAPI</option>
+								</select>
+								{/if}
+							</div>
+							{#if modalData.status !== "SELESAI"}
+							<div>
+								{#if tanggapan === undefined || tanggapanInp === "" || selected === "NULL"}
+								<button type="submit" disabled>Submit</button>
+								{:else if modalData.status === "PROSES"}
+								<button formaction="?/updateTanggapan" type="submit">Submit</button>
+								{:else}
+								<button formaction="?/beriTanggapan" type="submit">Submit</button>
+								{/if}
+							</div>
+							{/if}
+						</div>
+						
+					</form>
+				</div>
+				</div>
+				<footer>
+					<div class="grid">
 					<div>
 						<p>{modalData.tglPengaduan}</p>
 					</div>
@@ -277,7 +292,7 @@
 </div>
 {:else}
 <!-- ------------------------------------------------------------------------------------------ -->
-<div class="grid">
+<div class="grid" transition:slide="{{duration: 300, easing: quartOut}}">
 	<article class="grid" transition:slide="{{duration: 300, easing: quartOut}}">
 		<div>
 			<hgroup>
@@ -321,7 +336,7 @@
 </article>
 <div>
 	<br>
-	<div class="grid">
+	<div class="grid" transition:slide="{{duration: 300, easing: quartOut}}">
 		<div>
 			  <input type="search" id="search" name="search" placeholder="Search" bind:value={userSearchStr}>
 		</div>
@@ -348,7 +363,7 @@
 		{#if userData != undefined}
 		{#each userData as a}
 		{#if a.level === filterUser}
-		{#if a.name.includes(userSearchStr) || a.nik.includes(userSearchStr)}
+		{#if a.name.toLowerCase().includes(userSearchStr.toLowerCase()) || a.nik.includes(userSearchStr)}
 		<tr transition:fade="{{duration: 300, easing: quartOut}}">
 			<td>{a.nik}</td>
 			<td>{a.name}</td>

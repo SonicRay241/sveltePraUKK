@@ -30,7 +30,7 @@
               <slot/>
           </fieldset>
           {#if name == undefined || name == "" || username == undefined || username == "" || password == undefined || password == "" || phone == undefined || phone == "" || nik == undefined || nik == ""}
-            <button type="submit" class="contrast" disabled>Register</button>
+            <button class="contrast" disabled>Register</button>
           {:else}
             <button type="submit" class="contrast">Register</button>
           {/if}

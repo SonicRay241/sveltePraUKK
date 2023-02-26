@@ -10,7 +10,7 @@ export const load: PageServerLoad = async ({ locals }) => {
     }
     return { 
         creds: prisma.user.findMany()
-     }
+    }
 }
 
 export const actions: Actions = {
