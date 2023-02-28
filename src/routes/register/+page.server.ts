@@ -8,9 +8,6 @@ export const load: PageServerLoad = async ({ locals }) => {
     if ( session ) {
         throw redirect(302, "/home")
     }
-    return { 
-        creds: prisma.user.findMany()
-    }
 }
 
 export const actions: Actions = {

@@ -6,6 +6,8 @@
 	import { quartOut } from 'svelte/easing';
 	import { utils, write } from "xlsx";
 	import saveAs from "file-saver";
+	import { onMount } from "svelte";
+	import { createEventDispatcher } from "svelte";
 
     let modal: any;
 	  let modalData  = {
@@ -75,6 +77,10 @@
 
     $: ({ pengaduan, user, tanggapan, userData } = data)
 
+	onMount(() => {
+		pengaduan?.reverse()
+	})
+
 	const generateLaporan = () => {	
 		const laporanInput = pengaduan
 		if (laporanInput)
@@ -108,6 +114,67 @@
 		return blob
 	}
 
+	const dispatch = createEventDispatcher()
+
+	const toggleUrutan = () => {
+		dispatch("click",
+		{ pengaduan }
+		)
+	}
+
+	let table: HTMLTableElement, rows, switching, i, x, y, shouldSwitch: any, dir, switchcount = 0;
+	function sortTable(n:any) {
+  switching = true;
+  // Set the sorting direction to ascending:
+  dir = "asc"
+  /* Make a loop that will continue until
+  no switching has been done: */
+  while (switching) {
+    // Start by saying: no switching is done:
+    switching = false;
+    rows = table.rows;
+    /* Loop through all table rows (except the
+    first, which contains table headers): */
+    for (i = 1; i < (rows.length - 1); i++) {
+      // Start by saying there should be no switching:
+      shouldSwitch = false;
+      /* Get the two elements you want to compare,
+      one from current row and one from the next: */
+      x = rows[i].getElementsByTagName("TD")[n];
+      y = rows[i + 1].getElementsByTagName("TD")[n];
+      /* Check if the two rows should switch place,
+      based on the direction, asc or desc: */
+      if (dir == "asc") {
+        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+          // If so, mark as a switch and break the loop:
+          shouldSwitch = true;
+          break;
+        }
+      } else if (dir == "desc") {
+        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+          // If so, mark as a switch and break the loop:
+          shouldSwitch = true;
+          break;
+        }
+      }
+    }
+    if (shouldSwitch) {
+      /* If a switch has been marked, make the switch
+      and mark that a switch has been done: */
+      rows[i].parentNode?.insertBefore(rows[i + 1], rows[i]);
+      switching = true;
+      // Each time a switch is done, increase this count by 1:
+      switchcount ++; 
+    } else {
+      /* If no switching has been done AND the direction is "asc",
+      set the direction to "desc" and run the while loop again. */
+      if (switchcount == 0 && dir == "asc") {
+        dir = "desc";
+        switching = true;
+      }
+    }
+  }
+}
 </script>
 
 <Navbar logged={true} name = { user?.name ?? "" } nik = {user?.nik ?? ""} admin={true} role={user?.level} telp = {user?.telepon}>
@@ -147,6 +214,7 @@
 						<option value="SELESAI">SUDAH DITANGGAPI</option>
 					</select>
 					<button on:click={() => {saveAs(generateLaporan(), 'Laporan.xlsx')}}>Generate Laporan</button>
+					<button on:click={() => sortTable(0)}>A</button>
 				</div>
 				{:else}
 				<select bind:value={filter}>
@@ -157,7 +225,7 @@
 				{/if}
 			</div>
 			<div class="table-wrapper">
-				<table role="grid">
+				<table role="grid" bind:this={table}>
 					<thead>
 						<tr>
 							<th scope="col">Judul</th>
@@ -314,7 +382,7 @@
 					<option value="PETUGAS">PETUGAS</option>
 					<option value="ADMIN">ADMIN</option>
 				</select>
-		<input type="text" name="role" bind:value={registerRole} style="display: none;">
+				<input type="text" name="role" bind:value={registerRole} style="display: none;">
 		<fieldset>
 			<slot/>
 		</fieldset>
